@@ -1,23 +1,30 @@
-// Данные магазина - теперь единый источник истины
-let storeData = {
-    name: 'SMOKIN174',
-    products: [
-        {
-            id: 1,
-            name: "Пример товара 1",
-            category: "Электроника",
-            price: 9990,
-            image: "https://images.unsplash.com/photo-1561047029-3000c68339ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-        },
-        {
-            id: 2,
-            name: "Пример товара 2",
-            category: "Одежда",
-            price: 2990,
-            image: "https://images.unsplash.com/photo-1553545204-5336bc12ca32?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-        }
-    ]
-};
+function syncDataAcrossDevices() {
+    // Пробуем загрузить из localStorage
+    let savedData = localStorage.getItem('smokin174_data');
+    
+    // Если на этом устройстве нет данных, используем дефолтные
+    if (!savedData) {
+        const defaultData = {
+            name: 'SMOKIN174',
+            products: [
+                {
+                    id: 1,
+                    name: "Пример товара",
+                    category: "Категория",
+                    price: 1000,
+                    image: "placeholder.jpg"
+                }
+            ]
+        };
+        localStorage.setItem('smokin174_data', JSON.stringify(defaultData));
+        return defaultData;
+    }
+    
+    return JSON.parse(savedData);
+}
+
+// Инициализация данных
+let storeData = syncDataAcrossDevices();
 
 // Загружаем данные из localStorage при запуске
 try {

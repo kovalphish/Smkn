@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Админ-панель | SMOKIN174</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -392,6 +392,23 @@
         });
         
         // Рендер фильтра категорий
+        // В начале скрипта admin-panel.html
+function syncAdminData() {
+    // При открытии админки - грузим актуальные данные
+    const savedData = localStorage.getItem('smokin174_data');
+    if (savedData) {
+        const data = JSON.parse(savedData);
+        products = data.products || [];
+        console.log('Загружено товаров:', products.length);
+    }
+}
+
+// Вызовите при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    syncAdminData();
+    loadProductsFromStorage();
+    // ... остальной код
+});
         function renderCategoriesFilter() {
             const categories = ['Все товары', ...new Set(products.map(p => p.category).filter(c => c))];
             const container = document.getElementById('categoriesFilter');
