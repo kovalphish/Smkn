@@ -20,15 +20,7 @@ function loadStoreData() {
     
     // Если нет товаров - создаем пример
     if (storeData.products.length === 0) {
-        storeData.products = [
-            {
-                id: Date.now(),
-                name: "Пример товара",
-                category: "Основная",
-                price: 1000,
-                image: ""
-            }
-        ];
+        storeData.products = [];
         saveStoreData();
     }
 }
