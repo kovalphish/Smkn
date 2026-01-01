@@ -1,12 +1,10 @@
-/* Сброс стилей и шрифты */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Inter', 'Poppins', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
 }
 
-/* Зеленый анимированный фон */
 body {
     min-height: 100vh;
     background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e9 100%);
@@ -67,18 +65,11 @@ body {
 }
 
 @keyframes float {
-    0%, 100% {
-        transform: translateY(0) rotate(0deg);
-    }
-    33% {
-        transform: translateY(-30px) rotate(120deg);
-    }
-    66% {
-        transform: translateY(30px) rotate(240deg);
-    }
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    33% { transform: translateY(-30px) rotate(120deg); }
+    66% { transform: translateY(30px) rotate(240deg); }
 }
 
-/* Секретная кнопка админа */
 .secret-admin {
     position: fixed;
     top: 0;
@@ -89,11 +80,10 @@ body {
     z-index: 1000;
 }
 
-/* Шапка */
 header {
     padding: 30px 20px 25px;
     text-align: center;
-    background: rgba(0, 0, 0, 0.92);
+    background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(15px);
     margin-bottom: 40px;
     border-bottom: 1px solid rgba(39, 174, 96, 0.1);
@@ -102,14 +92,8 @@ header {
 }
 
 @keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .header-content {
@@ -127,7 +111,7 @@ header {
 }
 
 .logo {
-    height: 200px;
+    height: 80px;
     width: auto;
     object-fit: contain;
     filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
@@ -141,7 +125,6 @@ header {
     text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Категории с зеленым акцентом */
 .categories {
     display: flex;
     justify-content: center;
@@ -162,7 +145,7 @@ header {
     font-size: 0.95rem;
     font-weight: 600;
     color: #2d3436;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s;
     position: relative;
     overflow: hidden;
     box-shadow: 0 3px 10px rgba(39, 174, 96, 0.08);
@@ -200,27 +183,24 @@ header {
     box-shadow: 0 6px 18px rgba(39, 174, 96, 0.25);
 }
 
-/* Контейнер */
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px 60px;
 }
 
-/* Сетка товаров */
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 30px;
 }
 
-/* Карточка товара */
 .product-card {
     background: white;
     border-radius: 18px;
     overflow: hidden;
     box-shadow: 0 6px 20px rgba(39, 174, 96, 0.1);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s;
     position: relative;
     opacity: 0;
     animation: fadeInUp 0.6s forwards;
@@ -229,14 +209,8 @@ header {
 }
 
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .product-card:hover {
@@ -247,7 +221,7 @@ header {
 
 .product-image {
     width: 100%;
-    height: 220px;
+    height: 250px;
     object-fit: cover;
     display: block;
     transition: transform 0.6s;
@@ -285,20 +259,6 @@ header {
     opacity: 0.8;
 }
 
-.product-category {
-    position: absolute;
-    top: -12px;
-    right: 20px;
-    background: #27ae60;
-    color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-}
-
-/* Секретная панель входа */
 .secret-panel {
     position: fixed;
     top: 0;
@@ -327,19 +287,13 @@ header {
     max-width: 420px;
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
     position: relative;
-    animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: scaleIn 0.4s;
     border: 1px solid #e0f7e9;
 }
 
 @keyframes scaleIn {
-    from {
-        opacity: 0;
-        transform: scale(0.8);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 .lock-icon {
@@ -427,88 +381,11 @@ header {
     background: #f5f5f5;
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
-    .logo {
-        height: 50px;
-    }
-    
-    .store-name {
-        font-size: 2rem;
-    }
-    
-    .categories {
-        gap: 8px;
-        padding-top: 15px;
-    }
-    
-    .category-btn {
-        padding: 10px 20px;
-        font-size: 0.9rem;
-    }
-    
-    .products-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 20px;
-    }
-    
-    .product-image {
-        height: 200px;
-    }
-}
-
-@media (max-width: 480px) {
-    .products-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .secret-content {
-        padding: 40px 25px;
-        margin: 20px;
-    }
-    
-    .store-name {
-        font-size: 1.8rem;
-    }
-}
-
-/* Эффект загрузки */
-.loading {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    border-top: 3px solid white;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-left: 10px;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Анимация встряски */
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-    20%, 40%, 60%, 80% { transform: translateX(5px); }
-}
-
-/* Сообщение о пустых товарах */
 .empty-state {
     grid-column: 1 / -1;
     text-align: center;
     padding: 80px 20px;
     color: #7f8c8d;
-}
-
-.empty-state i {
-    font-size: 4rem;
-    color: #bdc3c7;
-    margin-bottom: 20px;
-    display: block;
 }
 
 .empty-state h3 {
@@ -521,48 +398,67 @@ header {
     font-size: 1rem;
     color: #95a5a6;
 }
-/* МОБИЛЬНАЯ АДАПТАЦИЯ АДМИНКИ */
+
+.fas.fa-lock:before {
+    content: "🔒";
+}
+
+.fas.fa-check-circle:before {
+    content: "✅";
+}
+
+.fas.fa-plus:before {
+    content: "➕";
+}
+
+.fas.fa-save:before {
+    content: "💾";
+}
+
+.fas.fa-times:before {
+    content: "❌";
+}
+
+.fas.fa-trash:before {
+    content: "🗑️";
+}
+
+.fas.fa-upload:before {
+    content: "📤";
+}
+
+.fas.fa-cogs:before {
+    content: "⚙️";
+}
+
+.fas.fa-boxes:before {
+    content: "📦";
+}
+
+.fas.fa-tag:before {
+    content: "🏷️";
+}
+
+.fas.fa-leaf:before {
+    content: "🍃";
+}
+
+.fas.fa-image:before {
+    content: "🖼️";
+}
+
 @media (max-width: 768px) {
-    .admin-container {
-        padding: 10px;
-    }
-    
-    .admin-header {
-        padding: 15px;
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .admin-actions {
-        position: static;
-        margin-top: 15px;
-        justify-content: center;
-    }
-    
-    .products-table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-    }
-    
-    .products-table th,
-    .products-table td {
-        padding: 12px 8px;
-        font-size: 14px;
-    }
-    
-    .product-input {
-        width: 100%;
-        min-width: 120px;
-    }
-    
-    .product-image-preview {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .admin-btn {
-        padding: 8px 15px;
-        font-size: 14px;
-    }
+    .logo { height: 60px; }
+    .store-name { font-size: 2rem; }
+    .categories { gap: 8px; padding-top: 15px; }
+    .category-btn { padding: 10px 20px; font-size: 0.9rem; }
+    .products-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .product-image { height: 220px; }
+    .secret-content { padding: 40px 25px; margin: 20px; }
+}
+
+@media (max-width: 480px) {
+    .products-grid { grid-template-columns: 1fr; }
+    .store-name { font-size: 1.8rem; }
+    .product-image { height: 200px; }
 }

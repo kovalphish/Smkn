@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMOKIN174</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Анимированный фон с зелеными тонами -->
     <div class="bg-animation">
         <div class="circle"></div>
         <div class="circle"></div>
@@ -16,37 +14,30 @@
         <div class="circle"></div>
     </div>
 
-    <!-- Секретная кнопка админа -->
     <div class="secret-admin" id="secretAdmin"></div>
 
     <header>
         <div class="header-content">
-            <!-- Логотип и название -->
             <div class="brand">
-                <img src="logo.png" alt="SMOKIN174" class="logo">
+                <img src="logo.png" alt="SMOKIN174" class="logo" id="logoImage">
                 <h1 class="store-name">SMOKIN174</h1>
             </div>
         </div>
         
-        <div class="categories" id="categories">
-            <!-- Категории загружаются динамически -->
-        </div>
+        <div class="categories" id="categories"></div>
     </header>
 
     <main class="container">
-        <div class="products-grid" id="productsContainer">
-            <!-- Товары загружаются динамически -->
-        </div>
+        <div class="products-grid" id="productsContainer"></div>
     </main>
 
-    <!-- Секретная панель входа -->
     <div class="secret-panel" id="secretPanel">
         <div class="secret-content">
             <div class="lock-icon">
                 <i class="fas fa-lock"></i>
             </div>
             <h3>Панель управления</h3>
-            <input type="password" id="adminPassword" placeholder="Пароль администратора" autocomplete="off">
+            <input type="password" id="adminPassword" placeholder="Пароль: admin" autocomplete="off">
             <button class="btn-login" onclick="loginAdmin()">Войти в систему</button>
             <div class="secret-close" onclick="hideSecretPanel()">&times;</div>
         </div>

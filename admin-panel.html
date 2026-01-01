@@ -1,38 +1,37 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Админ-панель | SMOKIN174</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
         }
         
         body {
             background: #f8f9fa;
             color: #333;
             min-height: 100vh;
+            padding: 20px;
         }
         
         .admin-container {
-            padding: 20px;
             max-width: 1200px;
             margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
         }
         
         .admin-header {
             background: linear-gradient(135deg, #27ae60, #219653);
             color: white;
             padding: 25px 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(39, 174, 96, 0.2);
             position: relative;
         }
         
@@ -40,9 +39,6 @@
             font-size: 1.8rem;
             font-weight: 600;
             margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
         }
         
         .admin-header p {
@@ -85,11 +81,14 @@
         .btn-back {
             background: rgba(255,255,255,0.2);
             color: white;
-            backdrop-filter: blur(10px);
         }
         
         .btn-back:hover {
             background: rgba(255,255,255,0.3);
+        }
+        
+        .admin-content {
+            padding: 30px;
         }
         
         .btn-add {
@@ -114,18 +113,10 @@
             box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
         }
         
-        /* Таблица товаров */
-        .products-table-container {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            margin-top: 20px;
-        }
-        
         .products-table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
         
         .products-table th {
@@ -199,11 +190,6 @@
             display: none;
         }
         
-        .product-actions-cell {
-            display: flex;
-            gap: 8px;
-        }
-        
         .btn-delete {
             background: #e74c3c;
             color: white;
@@ -247,49 +233,50 @@
         }
         
         @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(100%);
+            from { opacity: 0; transform: translateX(100%); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            
+            .admin-header {
+                padding: 20px;
+                text-align: center;
             }
-            to {
-                opacity: 1;
-                transform: translateX(0);
+            
+            .admin-actions {
+                position: static;
+                margin-top: 15px;
+                justify-content: center;
+                flex-wrap: wrap;
             }
-        }
-        
-        .notification i {
-            font-size: 1.2rem;
-        }
-        
-        /* Категории фильтр */
-        .categories-filter {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-        }
-        
-        .category-filter-btn {
-            background: white;
-            border: 2px solid #e0f7e9;
-            padding: 10px 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #2d3436;
-            transition: all 0.3s;
-        }
-        
-        .category-filter-btn:hover {
-            border-color: #27ae60;
-            background: rgba(39, 174, 96, 0.05);
-        }
-        
-        .category-filter-btn.active {
-            background: #27ae60;
-            color: white;
-            border-color: #27ae60;
+            
+            .products-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .products-table th,
+            .products-table td {
+                padding: 12px 8px;
+                font-size: 14px;
+            }
+            
+            .product-input {
+                width: 100%;
+                min-width: 120px;
+            }
+            
+            .product-image-preview {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .admin-btn {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -297,26 +284,22 @@
     <div class="admin-container">
         <div class="admin-header">
             <div>
-                <h1><i class="fas fa-cogs"></i> Панель управления товарами</h1>
+                <h1>⚙️ Панель управления товарами</h1>
                 <p>SMOKIN174 - Редактирование каталога</p>
             </div>
             
             <div class="admin-actions">
                 <button class="admin-btn btn-back" onclick="window.close()">
-                    <i class="fas fa-times"></i> Закрыть
+                    ❌ Закрыть
                 </button>
             </div>
         </div>
         
-        <div class="categories-filter" id="categoriesFilter">
-            <!-- Категории будут здесь -->
-        </div>
-        
-        <button class="btn-add" onclick="addProduct()">
-            <i class="fas fa-plus"></i> Добавить новый товар
-        </button>
-        
-        <div class="products-table-container">
+        <div class="admin-content">
+            <button class="btn-add" onclick="addProduct()">
+                ➕ Добавить новый товар
+            </button>
+            
             <table class="products-table">
                 <thead>
                     <tr>
@@ -328,126 +311,71 @@
                         <th style="width: 100px">Действия</th>
                     </tr>
                 </thead>
-                <tbody id="productsTableBody">
-                    <!-- Товары будут здесь -->
-                </tbody>
+                <tbody id="productsTableBody"></tbody>
             </table>
             
             <div id="emptyState" class="empty-state" style="display: none;">
                 <h3>Товаров нет</h3>
                 <p>Добавьте первый товар, нажав на кнопку выше</p>
             </div>
-        </div>
-        
-        <div style="margin-top: 30px; text-align: center;">
-            <button class="admin-btn btn-save" onclick="saveAndClose()" style="padding: 15px 40px; font-size: 1rem;">
-                <i class="fas fa-save"></i> Сохранить изменения и обновить магазин
-            </button>
-            <p style="color: #666; margin-top: 10px; font-size: 0.9rem;">Все изменения сохраняются автоматически</p>
+            
+            <div style="margin-top: 40px; text-align: center;">
+                <button class="admin-btn btn-save" onclick="saveAndClose()" style="padding: 15px 40px; font-size: 1rem;">
+                    💾 Сохранить и обновить магазин
+                </button>
+                <p style="color: #666; margin-top: 10px; font-size: 0.9rem;">
+                    Все изменения сохраняются автоматически
+                </p>
+            </div>
         </div>
     </div>
     
     <div id="notification" class="notification">
-        <i class="fas fa-check-circle"></i>
         <span id="notificationText"></span>
     </div>
     
     <script>
-        // Загружаем данные из localStorage
         let products = [];
         
-        function loadProductsFromStorage() {
-            try {
-                const savedData = localStorage.getItem('smokin174_data');
-                if (savedData) {
-                    const parsedData = JSON.parse(savedData);
-                    if (parsedData && Array.isArray(parsedData.products)) {
-                        products = parsedData.products;
-                        console.log('Загружено товаров:', products.length);
-                    }
-                }
-            } catch (e) {
-                console.error('Ошибка загрузки товаров:', e);
+        // Получаем данные от родительского окна
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'INIT_DATA') {
+                products = event.data.products;
+                renderProductsTable();
             }
-            
-            // Если нет товаров, создаем пример
-            if (products.length === 0) {
-                products = [
-                    {
-                        id: Date.now(),
-                        name: "Пример товара",
-                        category: "Пример категории",
-                        price: 1000,
-                        image: "https://images.unsplash.com/photo-1556656793-08538906a9f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
-                    }
-                ];
-            }
-        }
-        
-        // Инициализация
-        document.addEventListener('DOMContentLoaded', function() {
-            loadProductsFromStorage();
-            renderCategoriesFilter();
-            renderProductsTable();
         });
         
-        // Рендер фильтра категорий
-        // В начале скрипта admin-panel.html
-function syncAdminData() {
-    // При открытии админки - грузим актуальные данные
-    const savedData = localStorage.getItem('smokin174_data');
-    if (savedData) {
-        const data = JSON.parse(savedData);
-        products = data.products || [];
-        console.log('Загружено товаров:', products.length);
-    }
-}
-
-// Вызовите при загрузке
-document.addEventListener('DOMContentLoaded', function() {
-    syncAdminData();
-    loadProductsFromStorage();
-    // ... остальной код
-});
-        function renderCategoriesFilter() {
-            const categories = ['Все товары', ...new Set(products.map(p => p.category).filter(c => c))];
-            const container = document.getElementById('categoriesFilter');
-            container.innerHTML = '';
-            
-            categories.forEach(category => {
-                const btn = document.createElement('button');
-                btn.className = 'category-filter-btn';
-                btn.textContent = category;
-                btn.onclick = () => filterByCategory(category);
-                
-                if (category === 'Все товары') {
-                    btn.classList.add('active');
+        // Или загружаем из localStorage
+        function loadProducts() {
+            try {
+                const saved = localStorage.getItem('smokin174_data');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    products = data.products || [];
                 }
-                
-                container.appendChild(btn);
-            });
+            } catch (e) {
+                console.log('Ошибка загрузки');
+            }
+            
+            if (products.length === 0) {
+                products = [{
+                    id: Date.now(),
+                    name: "Пример товара",
+                    category: "Основная",
+                    price: 1000,
+                    image: ""
+                }];
+            }
+            
+            renderProductsTable();
         }
         
-        // Фильтрация по категории
-        function filterByCategory(category) {
-            document.querySelectorAll('.category-filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            const filtered = category === 'Все товары' 
-                ? products 
-                : products.filter(p => p.category === category);
-            
-            renderProductsTable(filtered);
-        }
-        
-        // Рендер таблицы товаров
-        function renderProductsTable(productsToShow = products) {
+        // Рендер таблицы
+        function renderProductsTable() {
             const tbody = document.getElementById('productsTableBody');
             const emptyState = document.getElementById('emptyState');
             
-            if (productsToShow.length === 0) {
+            if (!products.length) {
                 tbody.innerHTML = '';
                 emptyState.style.display = 'block';
                 return;
@@ -456,7 +384,7 @@ document.addEventListener('DOMContentLoaded', function() {
             emptyState.style.display = 'none';
             tbody.innerHTML = '';
             
-            productsToShow.forEach((product, index) => {
+            products.forEach((product, index) => {
                 const row = document.createElement('tr');
                 row.className = 'product-row';
                 
@@ -464,12 +392,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>${product.id}</td>
                     <td>
                         <div class="product-image-cell">
-                            <img src="${product.image || 'https://via.placeholder.com/70x70?text=Нет+фото'}" 
+                            <img src="${product.image || 'placeholder.jpg'}" 
                                  class="product-image-preview" 
                                  alt="Превью"
-                                 onerror="this.src='https://via.placeholder.com/70x70?text=Ошибка+загрузки'">
+                                 onerror="this.src='placeholder.jpg'">
                             <button class="image-upload-btn" onclick="uploadImage(${index})">
-                                <i class="fas fa-upload"></i>
+                                📤
                             </button>
                             <input type="file" 
                                    class="file-input" 
@@ -498,7 +426,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </td>
                     <td>
                         <button class="btn-delete" onclick="deleteProduct(${index})">
-                            <i class="fas fa-trash"></i> Удалить
+                            🗑️ Удалить
                         </button>
                     </td>
                 `;
@@ -514,15 +442,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             products[index][field] = value;
-            
-            // Обновляем категории в фильтре если изменилась категория
-            if (field === 'category') {
-                setTimeout(() => renderCategoriesFilter(), 100);
-            }
-            
-            // Сохраняем изменения
             saveChanges();
-            
             showNotification('Изменения сохранены');
         }
         
@@ -535,9 +455,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const file = fileInput.files[0];
             if (!file) return;
             
-            // Проверяем размер файла (максимум 5MB)
             if (file.size > 5 * 1024 * 1024) {
-                alert('Файл слишком большой. Максимальный размер: 5MB');
+                alert('Файл слишком большой. Максимум 5MB');
                 return;
             }
             
@@ -545,7 +464,6 @@ document.addEventListener('DOMContentLoaded', function() {
             reader.onload = function(e) {
                 products[index].image = e.target.result;
                 
-                // Обновляем превью
                 const img = fileInput.closest('.product-image-cell').querySelector('.product-image-preview');
                 img.src = e.target.result;
                 
@@ -559,7 +477,6 @@ document.addEventListener('DOMContentLoaded', function() {
         function deleteProduct(index) {
             if (confirm('Удалить этот товар?')) {
                 products.splice(index, 1);
-                renderCategoriesFilter();
                 renderProductsTable();
                 saveChanges();
                 showNotification('Товар удален');
@@ -577,7 +494,6 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             products.push(newProduct);
-            renderCategoriesFilter();
             renderProductsTable();
             showNotification('Новый товар добавлен');
             saveChanges();
@@ -593,27 +509,20 @@ document.addEventListener('DOMContentLoaded', function() {
             
             localStorage.setItem('smokin174_data', JSON.stringify(storeData));
             
-            // Отправляем сообщение в родительское окно (если оно открыто)
+            // Отправляем в родительское окно
             if (window.opener && !window.opener.closed) {
-                try {
-                    window.opener.postMessage({
-                        type: 'UPDATE_PRODUCTS',
-                        products: products
-                    }, '*');
-                } catch (e) {
-                    console.log('Не удалось отправить сообщение в родительское окно');
-                }
+                window.opener.postMessage({
+                    type: 'UPDATE_PRODUCTS',
+                    products: products
+                }, '*');
             }
-            
-            console.log('Изменения сохранены. Товаров:', products.length);
         }
         
         // Сохранить и закрыть
         function saveAndClose() {
             saveChanges();
-            showNotification('Все изменения сохранены! Магазин обновлен.');
+            showNotification('Все изменения сохранены!');
             
-            // Ждем секунду и закрываем
             setTimeout(() => {
                 if (window.opener && !window.opener.closed) {
                     window.opener.location.reload();
@@ -632,16 +541,14 @@ document.addEventListener('DOMContentLoaded', function() {
             
             setTimeout(() => {
                 notification.style.display = 'none';
-            }, 3000);
+            }, 2000);
         }
+        
+        // Загружаем данные при старте
+        document.addEventListener('DOMContentLoaded', loadProducts);
         
         // Автосохранение при закрытии
         window.addEventListener('beforeunload', saveChanges);
-        
-        // Сообщаем родительскому окну что мы открылись
-        if (window.opener) {
-            window.opener.postMessage({ type: 'ADMIN_PANEL_OPENED' }, '*');
-        }
     </script>
 </body>
 </html>

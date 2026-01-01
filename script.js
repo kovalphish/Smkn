@@ -1,50 +1,49 @@
-function syncDataAcrossDevices() {
-    // Пробуем загрузить из localStorage
-    let savedData = localStorage.getItem('smokin174_data');
-    
-    // Если на этом устройстве нет данных, используем дефолтные
-    if (!savedData) {
-        const defaultData = {
-            name: 'SMOKIN174',
-            products: [
-                {
-                    id: 1,
-                    name: "Пример товара",
-                    category: "Категория",
-                    price: 1000,
-                    image: "placeholder.jpg"
-                }
-            ]
-        };
-        localStorage.setItem('smokin174_data', JSON.stringify(defaultData));
-        return defaultData;
-    }
-    
-    return JSON.parse(savedData);
-}
+// Данные магазина
+let storeData = {
+    name: 'SMOKIN174',
+    products: []
+};
 
-// Инициализация данных
-let storeData = syncDataAcrossDevices();
-
-// Загружаем данные из localStorage при запуске
-try {
-    const savedData = localStorage.getItem('smokin174_data');
-    if (savedData) {
-        const parsedData = JSON.parse(savedData);
-        if (parsedData && Array.isArray(parsedData.products)) {
-            storeData = parsedData;
+// Загружаем данные при запуске
+function loadStoreData() {
+    try {
+        const saved = localStorage.getItem('smokin174_data');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed && Array.isArray(parsed.products)) {
+                storeData = parsed;
+            }
         }
+    } catch (e) {
+        console.log('Ошибка загрузки данных');
     }
-} catch (e) {
-    console.log('Ошибка загрузки данных, используем стандартные');
+    
+    // Если нет товаров - создаем пример
+    if (storeData.products.length === 0) {
+        storeData.products = [
+            {
+                id: Date.now(),
+                name: "Пример товара",
+                category: "Основная",
+                price: 1000,
+                image: ""
+            }
+        ];
+        saveStoreData();
+    }
 }
 
-// Инициализация магазина
+// Сохраняем данные
+function saveStoreData() {
+    localStorage.setItem('smokin174_data', JSON.stringify(storeData));
+}
+
+// Инициализация
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Загружаем товары:', storeData.products.length);
+    loadStoreData();
     loadProducts();
     
-    // Секретный вход (тройной клик в правом верхнем углу)
+    // Секретный вход (тройной клик)
     let clickCount = 0;
     let clickTimer;
     
@@ -63,15 +62,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Сохранение данных
-function saveStoreData() {
-    localStorage.setItem('smokin174_data', JSON.stringify(storeData));
-    console.log('Данные сохранены:', storeData.products.length, 'товаров');
-}
-
 // Загрузка товаров
 function loadProducts() {
-    console.log('Отображаем товары:', storeData.products);
     displayCategories();
     displayProducts(storeData.products);
 }
@@ -82,7 +74,6 @@ function displayCategories() {
     const container = document.getElementById('categories');
     container.innerHTML = '';
     
-    // Собираем уникальные категории
     const categorySet = new Set();
     storeData.products.forEach(product => {
         if (product.category && product.category.trim()) {
@@ -127,9 +118,9 @@ function displayProducts(productsToShow) {
     if (!productsToShow || productsToShow.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
-                <i class="fas fa-leaf"></i>
+                <div style="font-size: 3rem; margin-bottom: 20px;">🛒</div>
                 <h3>Товаров нет</h3>
-                <p>Выберите другую категорию или добавьте товары в админке</p>
+                <p>Добавьте товары в админке</p>
             </div>
         `;
         return;
@@ -141,9 +132,8 @@ function displayProducts(productsToShow) {
         card.style.setProperty('--index', index);
         
         card.innerHTML = `
-
-            <img src="${product.image}" alt="${product.name}" class="product-image" 
-                 onerror="this.src='https://images.unsplash.com/photo-1556656793-08538906a9f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
+            <img src="${product.image || 'placeholder.jpg'}" alt="${product.name}" class="product-image" 
+                 onerror="this.src='placeholder.jpg'">
             <div class="product-info">
                 <div class="product-name">${product.name}</div>
                 <div class="product-price">${product.price.toLocaleString()}</div>
@@ -173,15 +163,15 @@ function loginAdmin() {
     const originalText = btn.textContent;
     
     if (password === 'admin') {
-        btn.innerHTML = 'Вход в систему <span class="loading"></span>';
         btn.disabled = true;
+        btn.textContent = 'Вход...';
         
         setTimeout(() => {
             hideSecretPanel();
             openAdminPanel();
-            btn.innerHTML = originalText;
+            btn.textContent = originalText;
             btn.disabled = false;
-        }, 500);
+        }, 300);
     } else {
         const input = document.getElementById('adminPassword');
         input.style.borderColor = '#e74c3c';
@@ -197,21 +187,38 @@ function loginAdmin() {
     }
 }
 
-// ОТКРЫТИЕ АДМИН-ПАНЕЛИ (УПРОЩЕННАЯ И РАБОЧАЯ ВЕРСИЯ)
+// Открытие админ-панели
 function openAdminPanel() {
-    // Открываем новое окно
-    const adminWindow = window.open('admin-panel.html', '_blank', 'width=1100,height=700');
+    const adminWindow = window.open('admin-panel.html', '_blank', 'width=1100,height=700,scrollbars=yes');
     
-    // Передаем данные через localStorage
-    localStorage.setItem('smokin174_admin_open', Date.now().toString());
+    // Ждем пока загрузится админка и передаем данные
+    const checkAdminLoaded = setInterval(() => {
+        if (adminWindow && !adminWindow.closed) {
+            try {
+                adminWindow.postMessage({
+                    type: 'INIT_DATA',
+                    products: storeData.products
+                }, '*');
+                clearInterval(checkAdminLoaded);
+            } catch (e) {
+                // Окно еще не готово
+            }
+        } else {
+            clearInterval(checkAdminLoaded);
+        }
+    }, 100);
     
-    // Слушаем сообщения от админки
+    // Слушаем обновления от админки
     window.addEventListener('message', function(event) {
         if (event.data.type === 'UPDATE_PRODUCTS') {
-            console.log('Получены обновленные товары:', event.data.products);
             storeData.products = event.data.products;
             saveStoreData();
-            loadProducts(); // Сразу обновляем отображение
+            loadProducts();
         }
     });
 }
+
+// Сохранение при закрытии
+window.addEventListener('beforeunload', function() {
+    saveStoreData();
+});
