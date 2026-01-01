@@ -134,7 +134,7 @@ function displayProducts(productsToShow) {
         card.style.setProperty('--index', index);
         
         card.innerHTML = `
-            <div class="product-category">${product.category}</div>
+
             <img src="${product.image}" alt="${product.name}" class="product-image" 
                  onerror="this.src='https://images.unsplash.com/photo-1556656793-08538906a9f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
             <div class="product-info">
