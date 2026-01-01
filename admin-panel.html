@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель | SMOKIN174</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background: #f8f9fa;
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .admin-container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #27ae60, #219653);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(39, 174, 96, 0.2);
+            position: relative;
+        }
+        
+        .admin-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .admin-header p {
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .admin-actions {
+            position: absolute;
+            top: 25px;
+            right: 30px;
+            display: flex;
+            gap: 12px;
+        }
+        
+        .admin-btn {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-save {
+            background: white;
+            color: #27ae60;
+        }
+        
+        .btn-save:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .btn-back {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-back:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .btn-add {
+            background: white;
+            color: #27ae60;
+            border: 2px solid #27ae60;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 25px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-add:hover {
+            background: #27ae60;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
+        }
+        
+        /* Таблица товаров */
+        .products-table-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-top: 20px;
+        }
+        
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .products-table th {
+            text-align: left;
+            padding: 18px 20px;
+            background: #f8f9fa;
+            color: #666;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .products-table td {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+        
+        .product-row:hover {
+            background: #fafbfc;
+        }
+        
+        .product-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0f7e9;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            background: white;
+        }
+        
+        .product-input:focus {
+            outline: none;
+            border-color: #27ae60;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+        
+        .product-image-cell {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .product-image-preview {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        
+        .image-upload-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: opacity 0.3s;
+        }
+        
+        .image-upload-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .product-actions-cell {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: opacity 0.3s;
+        }
+        
+        .btn-delete:hover {
+            opacity: 0.9;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #666;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #27ae60;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            animation: slideInRight 0.3s;
+            z-index: 1000;
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .notification i {
+            font-size: 1.2rem;
+        }
+        
+        /* Категории фильтр */
+        .categories-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .category-filter-btn {
+            background: white;
+            border: 2px solid #e0f7e9;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2d3436;
+            transition: all 0.3s;
+        }
+        
+        .category-filter-btn:hover {
+            border-color: #27ae60;
+            background: rgba(39, 174, 96, 0.05);
+        }
+        
+        .category-filter-btn.active {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <div>
+                <h1><i class="fas fa-cogs"></i> Панель управления товарами</h1>
+                <p>SMOKIN174 - Редактирование каталога</p>
+            </div>
+            
+            <div class="admin-actions">
+                <button class="admin-btn btn-back" onclick="window.close()">
+                    <i class="fas fa-times"></i> Закрыть
+                </button>
+            </div>
+        </div>
+        
+        <div class="categories-filter" id="categoriesFilter">
+            <!-- Категории будут здесь -->
+        </div>
+        
+        <button class="btn-add" onclick="addProduct()">
+            <i class="fas fa-plus"></i> Добавить новый товар
+        </button>
+        
+        <div class="products-table-container">
+            <table class="products-table">
+                <thead>
+                    <tr>
+                        <th style="width: 50px">ID</th>
+                        <th style="width: 100px">Изображение</th>
+                        <th>Название</th>
+                        <th>Категория</th>
+                        <th style="width: 120px">Цена (₽)</th>
+                        <th style="width: 100px">Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="productsTableBody">
+                    <!-- Товары будут здесь -->
+                </tbody>
+            </table>
+            
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <h3>Товаров нет</h3>
+                <p>Добавьте первый товар, нажав на кнопку выше</p>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; text-align: center;">
+            <button class="admin-btn btn-save" onclick="saveAndClose()" style="padding: 15px 40px; font-size: 1rem;">
+                <i class="fas fa-save"></i> Сохранить изменения и обновить магазин
+            </button>
+            <p style="color: #666; margin-top: 10px; font-size: 0.9rem;">Все изменения сохраняются автоматически</p>
+        </div>
+    </div>
+    
+    <div id="notification" class="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText"></span>
+    </div>
+    
+    <script>
+        // Загружаем данные из localStorage
+        let products = [];
+        
+        function loadProductsFromStorage() {
+            try {
+                const savedData = localStorage.getItem('smokin174_data');
+                if (savedData) {
+                    const parsedData = JSON.parse(savedData);
+                    if (parsedData && Array.isArray(parsedData.products)) {
+                        products = parsedData.products;
+                        console.log('Загружено товаров:', products.length);
+                    }
+                }
+            } catch (e) {
+                console.error('Ошибка загрузки товаров:', e);
+            }
+            
+            // Если нет товаров, создаем пример
+            if (products.length === 0) {
+                products = [
+                    {
+                        id: Date.now(),
+                        name: "Пример товара",
+                        category: "Пример категории",
+                        price: 1000,
+                        image: "https://images.unsplash.com/photo-1556656793-08538906a9f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80"
+                    }
+                ];
+            }
+        }
+        
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProductsFromStorage();
+            renderCategoriesFilter();
+            renderProductsTable();
+        });
+        
+        // Рендер фильтра категорий
+        function renderCategoriesFilter() {
+            const categories = ['Все товары', ...new Set(products.map(p => p.category).filter(c => c))];
+            const container = document.getElementById('categoriesFilter');
+            container.innerHTML = '';
+            
+            categories.forEach(category => {
+                const btn = document.createElement('button');
+                btn.className = 'category-filter-btn';
+                btn.textContent = category;
+                btn.onclick = () => filterByCategory(category);
+                
+                if (category === 'Все товары') {
+                    btn.classList.add('active');
+                }
+                
+                container.appendChild(btn);
+            });
+        }
+        
+        // Фильтрация по категории
+        function filterByCategory(category) {
+            document.querySelectorAll('.category-filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            const filtered = category === 'Все товары' 
+                ? products 
+                : products.filter(p => p.category === category);
+            
+            renderProductsTable(filtered);
+        }
+        
+        // Рендер таблицы товаров
+        function renderProductsTable(productsToShow = products) {
+            const tbody = document.getElementById('productsTableBody');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (productsToShow.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            tbody.innerHTML = '';
+            
+            productsToShow.forEach((product, index) => {
+                const row = document.createElement('tr');
+                row.className = 'product-row';
+                
+                row.innerHTML = `
+                    <td>${product.id}</td>
+                    <td>
+                        <div class="product-image-cell">
+                            <img src="${product.image || 'https://via.placeholder.com/70x70?text=Нет+фото'}" 
+                                 class="product-image-preview" 
+                                 alt="Превью"
+                                 onerror="this.src='https://via.placeholder.com/70x70?text=Ошибка+загрузки'">
+                            <button class="image-upload-btn" onclick="uploadImage(${index})">
+                                <i class="fas fa-upload"></i>
+                            </button>
+                            <input type="file" 
+                                   class="file-input" 
+                                   id="imageUpload_${index}"
+                                   accept="image/*"
+                                   onchange="handleImageUpload(${index}, this)">
+                        </div>
+                    </td>
+                    <td>
+                        <input type="text" 
+                               class="product-input" 
+                               value="${product.name}"
+                               onchange="updateProduct(${index}, 'name', this.value)">
+                    </td>
+                    <td>
+                        <input type="text" 
+                               class="product-input" 
+                               value="${product.category || ''}"
+                               onchange="updateProduct(${index}, 'category', this.value)">
+                    </td>
+                    <td>
+                        <input type="number" 
+                               class="product-input" 
+                               value="${product.price}"
+                               onchange="updateProduct(${index}, 'price', this.value)">
+                    </td>
+                    <td>
+                        <button class="btn-delete" onclick="deleteProduct(${index})">
+                            <i class="fas fa-trash"></i> Удалить
+                        </button>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Обновление товара
+        function updateProduct(index, field, value) {
+            if (field === 'price') {
+                value = parseInt(value) || 0;
+            }
+            
+            products[index][field] = value;
+            
+            // Обновляем категории в фильтре если изменилась категория
+            if (field === 'category') {
+                setTimeout(() => renderCategoriesFilter(), 100);
+            }
+            
+            // Сохраняем изменения
+            saveChanges();
+            
+            showNotification('Изменения сохранены');
+        }
+        
+        // Загрузка изображения
+        function uploadImage(index) {
+            document.getElementById(`imageUpload_${index}`).click();
+        }
+        
+        function handleImageUpload(index, fileInput) {
+            const file = fileInput.files[0];
+            if (!file) return;
+            
+            // Проверяем размер файла (максимум 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Файл слишком большой. Максимальный размер: 5MB');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                products[index].image = e.target.result;
+                
+                // Обновляем превью
+                const img = fileInput.closest('.product-image-cell').querySelector('.product-image-preview');
+                img.src = e.target.result;
+                
+                saveChanges();
+                showNotification('Изображение загружено');
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Удаление товара
+        function deleteProduct(index) {
+            if (confirm('Удалить этот товар?')) {
+                products.splice(index, 1);
+                renderCategoriesFilter();
+                renderProductsTable();
+                saveChanges();
+                showNotification('Товар удален');
+            }
+        }
+        
+        // Добавление товара
+        function addProduct() {
+            const newProduct = {
+                id: Date.now(),
+                name: 'Новый товар',
+                category: 'Новая категория',
+                price: 0,
+                image: ''
+            };
+            
+            products.push(newProduct);
+            renderCategoriesFilter();
+            renderProductsTable();
+            showNotification('Новый товар добавлен');
+            saveChanges();
+        }
+        
+        // Сохранение изменений
+        function saveChanges() {
+            // Сохраняем в localStorage
+            const storeData = {
+                name: 'SMOKIN174',
+                products: products
+            };
+            
+            localStorage.setItem('smokin174_data', JSON.stringify(storeData));
+            
+            // Отправляем сообщение в родительское окно (если оно открыто)
+            if (window.opener && !window.opener.closed) {
+                try {
+                    window.opener.postMessage({
+                        type: 'UPDATE_PRODUCTS',
+                        products: products
+                    }, '*');
+                } catch (e) {
+                    console.log('Не удалось отправить сообщение в родительское окно');
+                }
+            }
+            
+            console.log('Изменения сохранены. Товаров:', products.length);
+        }
+        
+        // Сохранить и закрыть
+        function saveAndClose() {
+            saveChanges();
+            showNotification('Все изменения сохранены! Магазин обновлен.');
+            
+            // Ждем секунду и закрываем
+            setTimeout(() => {
+                if (window.opener && !window.opener.closed) {
+                    window.opener.location.reload();
+                }
+                window.close();
+            }, 1000);
+        }
+        
+        // Показать уведомление
+        function showNotification(text) {
+            const notification = document.getElementById('notification');
+            const textEl = document.getElementById('notificationText');
+            
+            textEl.textContent = text;
+            notification.style.display = 'flex';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Автосохранение при закрытии
+        window.addEventListener('beforeunload', saveChanges);
+        
+        // Сообщаем родительскому окну что мы открылись
+        if (window.opener) {
+            window.opener.postMessage({ type: 'ADMIN_PANEL_OPENED' }, '*');
+        }
+    </script>
+</body>
+</html>
