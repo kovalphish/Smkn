@@ -1,66 +1,26 @@
 // Данные магазина
-let storeData = JSON.parse(localStorage.getItem('green_store_data')) || {
-    logo: 'https://via.placeholder.com/150x60/27ae60/ffffff?text=LOGO',
-    name: 'GREEN STORE',
+let storeData = JSON.parse(localStorage.getItem('smokin174_data')) || {
+    name: 'SMOKIN174',
     products: [
         {
-            id: 1,
-            name: "Органический чай",
-            category: "Напитки",
-            price: 890,
+            id: Date.now(),
+            name: "Пример товара 1",
+            category: "Электроника",
+            price: 9990,
             image: "https://images.unsplash.com/photo-1561047029-3000c68339ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
         },
         {
-            id: 2,
-            name: "Эко-сумка",
-            category: "Аксессуары",
-            price: 1490,
+            id: Date.now() + 1,
+            name: "Пример товара 2",
+            category: "Одежда",
+            price: 2990,
             image: "https://images.unsplash.com/photo-1553545204-5336bc12ca32?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-        },
-        {
-            id: 3,
-            name: "Натуральное мыло",
-            category: "Уход",
-            price: 450,
-            image: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-        },
-        {
-            id: 4,
-            name: "Бамбуковая щетка",
-            category: "Гигиена",
-            price: 290,
-            image: "https://images.unsplash.com/photo-1584305574647-0cc949570fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
         }
     ]
 };
 
 // Инициализация магазина
 document.addEventListener('DOMContentLoaded', function() {
-    // Загружаем логотип и название
-    document.getElementById('logoImage').src = storeData.logo;
-    document.getElementById('storeName').textContent = storeData.name;
-    
-    // Настраиваем загрузку логотипа
-    document.getElementById('logoUpload').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const newLogo = e.target.result;
-                document.getElementById('logoImage').src = newLogo;
-                storeData.logo = newLogo;
-                saveStoreData();
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-    
-    // Сохраняем название магазина при изменении
-    document.getElementById('storeName').addEventListener('input', function() {
-        storeData.name = this.textContent;
-        saveStoreData();
-    });
-    
     // Загружаем товары
     loadProducts();
     
@@ -85,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Сохранение данных магазина
 function saveStoreData() {
-    localStorage.setItem('green_store_data', JSON.stringify(storeData));
+    localStorage.setItem('smokin174_data', JSON.stringify(storeData));
 }
 
 // Загрузка товаров
@@ -206,15 +166,18 @@ function loginAdmin() {
     }
 }
 
-// Открытие админ-панели
+// ОТКРЫТИЕ АДМИН-ПАНЕЛИ (ГЛАВНОЕ ИСПРАВЛЕНИЕ!)
 function openAdminPanel() {
     const adminWindow = window.open('', '_blank', 'width=1100,height=700,scrollbars=yes');
+    
+    // Передаем данные в админку
+    adminWindow.storeData = JSON.parse(JSON.stringify(storeData)); // Глубокая копия
     
     adminWindow.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
-            <title>Панель управления | ${storeData.name}</title>
+            <title>Панель управления | SMOKIN174</title>
             <meta charset="UTF-8">
             <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -408,8 +371,7 @@ function openAdminPanel() {
                     font-size: 0.9rem;
                 }
                 
-                .product-form-group input,
-                .product-form-group select {
+                .product-form-group input {
                     width: 100%;
                     padding: 10px 12px;
                     border: 2px solid #e0f7e9;
@@ -419,8 +381,7 @@ function openAdminPanel() {
                     background: white;
                 }
                 
-                .product-form-group input:focus,
-                .product-form-group select:focus {
+                .product-form-group input:focus {
                     outline: none;
                     border-color: #27ae60;
                     box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
@@ -509,22 +470,6 @@ function openAdminPanel() {
                 }
                 
                 .btn-remove:hover {
-                    opacity: 0.9;
-                }
-                
-                .btn-update {
-                    background: #3498db;
-                    color: white;
-                    border: none;
-                    padding: 8px 16px;
-                    border-radius: 6px;
-                    cursor: pointer;
-                    font-size: 0.85rem;
-                    transition: opacity 0.3s;
-                    flex: 1;
-                }
-                
-                .btn-update:hover {
                     opacity: 0.9;
                 }
                 
@@ -626,7 +571,7 @@ function openAdminPanel() {
                 <div class="admin-sidebar">
                     <div class="admin-header">
                         <h1><i class="fas fa-cogs"></i> Панель управления</h1>
-                        <p>${storeData.name}</p>
+                        <p>SMOKIN174</p>
                     </div>
                     
                     <div class="categories-list" id="adminCategories">
@@ -663,18 +608,12 @@ function openAdminPanel() {
             </div>
             
             <script>
-                let products = ${JSON.stringify(storeData.products)};
+                // ВАЖНО: Получаем данные из родительского окна
+                let products = window.storeData.products || [];
                 let currentCategory = 'Все товары';
-                let editingProducts = false;
                 
-                // Инициализация
-                document.addEventListener('DOMContentLoaded', function() {
-                    renderCategories();
-                    renderProducts();
-                });
-                
-                // Рендер категорий в сайдбаре
-                function renderCategories() {
+                // Функция для обновления категорий
+                function updateCategoriesList() {
                     const categories = ['Все товары', ...new Set(products.map(p => p.category))];
                     const container = document.getElementById('adminCategories');
                     container.innerHTML = '';
@@ -703,7 +642,7 @@ function openAdminPanel() {
                     });
                 }
                 
-                // Рендер товаров
+                // Функция для отображения товаров
                 function renderProducts() {
                     const filteredProducts = currentCategory === 'Все товары' 
                         ? products 
@@ -728,7 +667,6 @@ function openAdminPanel() {
                         const productDiv = document.createElement('div');
                         productDiv.className = 'admin-product-card';
                         
-                        // Генерация уникального ID для инпутов
                         const inputId = 'product_' + product.id;
                         
                         productDiv.innerHTML = \`
@@ -737,7 +675,8 @@ function openAdminPanel() {
                                 <input type="text" 
                                        id="\${inputId}_name" 
                                        value="\${product.name}"
-                                       placeholder="Введите название">
+                                       placeholder="Введите название"
+                                       oninput="updateProductField('\${product.id}', 'name', this.value)">
                             </div>
                             
                             <div class="product-form-group">
@@ -745,7 +684,8 @@ function openAdminPanel() {
                                 <input type="text" 
                                        id="\${inputId}_category" 
                                        value="\${product.category}"
-                                       placeholder="Например: Напитки">
+                                       placeholder="Например: Электроника"
+                                       oninput="updateProductField('\${product.id}', 'category', this.value)">
                             </div>
                             
                             <div class="product-form-group">
@@ -753,7 +693,8 @@ function openAdminPanel() {
                                 <input type="number" 
                                        id="\${inputId}_price" 
                                        value="\${product.price}"
-                                       placeholder="0">
+                                       placeholder="0"
+                                       oninput="updateProductField('\${product.id}', 'price', this.value)">
                             </div>
                             
                             <div class="product-form-group">
@@ -770,7 +711,7 @@ function openAdminPanel() {
                                            class="file-input" 
                                            id="\${inputId}_file"
                                            accept="image/*"
-                                           onchange="uploadImage('\${inputId}', this)">
+                                           onchange="uploadProductImage('\${product.id}', this)">
                                     <button class="upload-btn" onclick="document.getElementById('\${inputId}_file').click()">
                                         <i class="fas fa-upload"></i>
                                     </button>
@@ -778,89 +719,89 @@ function openAdminPanel() {
                                            id="\${inputId}_image" 
                                            value="\${product.image || ''}"
                                            placeholder="Или вставьте URL картинки"
-                                           style="display: none;">
+                                           style="display: none;"
+                                           oninput="updateProductField('\${product.id}', 'image', this.value)">
                                 </div>
                             </div>
                             
                             <div class="product-actions">
-                                <button class="btn-remove" onclick="removeProduct(\${product.id})">
+                                <button class="btn-remove" onclick="removeProduct('\${product.id}')">
                                     <i class="fas fa-trash"></i> Удалить
                                 </button>
                             </div>
                         \`;
                         
-                        // Добавляем обработчики изменения
-                        const nameInput = productDiv.querySelector('#' + inputId + '_name');
-                        const categoryInput = productDiv.querySelector('#' + inputId + '_category');
-                        const priceInput = productDiv.querySelector('#' + inputId + '_price');
-                        const imageInput = productDiv.querySelector('#' + inputId + '_image');
-                        
-                        const updateHandler = () => {
-                            product.name = nameInput.value;
-                            product.category = categoryInput.value;
-                            product.price = parseInt(priceInput.value) || 0;
-                            product.image = imageInput.value;
-                            
-                            // Обновляем превью если изображение изменилось
-                            const preview = productDiv.querySelector('.image-preview');
-                            if (product.image) {
-                                preview.innerHTML = '<img src="' + product.image + '" alt="Превью">';
-                                preview.classList.remove('empty');
-                            }
-                            
-                            showNotification('Изменения сохранены');
-                        };
-                        
-                        nameInput.addEventListener('change', updateHandler);
-                        categoryInput.addEventListener('change', updateHandler);
-                        priceInput.addEventListener('change', updateHandler);
-                        imageInput.addEventListener('input', updateHandler);
-                        
                         container.appendChild(productDiv);
                     });
                 }
                 
+                // Обновление поля товара
+                window.updateProductField = function(productId, field, value) {
+                    const product = products.find(p => p.id == productId);
+                    if (product) {
+                        if (field === 'price') {
+                            value = parseInt(value) || 0;
+                        }
+                        product[field] = value;
+                        
+                        // Обновляем превью изображения если нужно
+                        if (field === 'image' && value) {
+                            const inputId = 'product_' + productId;
+                            const preview = document.querySelector('#' + inputId + '_file').closest('.image-upload-container').querySelector('.image-preview');
+                            if (preview) {
+                                preview.innerHTML = '<img src="' + value + '" alt="Превью">';
+                                preview.classList.remove('empty');
+                            }
+                        }
+                        
+                        showNotification('Изменения сохранены');
+                    }
+                };
+                
                 // Загрузка изображения
-                function uploadImage(inputId, fileInput) {
+                window.uploadProductImage = function(productId, fileInput) {
                     const file = fileInput.files[0];
                     if (!file) return;
                     
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         const imageUrl = e.target.result;
-                        const imageInput = document.getElementById(inputId + '_image');
-                        const preview = fileInput.closest('.image-upload-container').querySelector('.image-preview');
-                        
-                        imageInput.value = imageUrl;
-                        preview.innerHTML = '<img src="' + imageUrl + '" alt="Превью">';
-                        preview.classList.remove('empty');
-                        
-                        // Находим продукт и обновляем его изображение
-                        const productId = parseInt(inputId.split('_')[1]);
-                        const product = products.find(p => p.id === productId);
+                        const product = products.find(p => p.id == productId);
                         if (product) {
                             product.image = imageUrl;
+                            
+                            // Обновляем поле и превью
+                            const inputId = 'product_' + productId;
+                            const imageInput = document.getElementById(inputId + '_image');
+                            const preview = fileInput.closest('.image-upload-container').querySelector('.image-preview');
+                            
+                            if (imageInput) imageInput.value = imageUrl;
+                            if (preview) {
+                                preview.innerHTML = '<img src="' + imageUrl + '" alt="Превью">';
+                                preview.classList.remove('empty');
+                            }
+                            
                             showNotification('Изображение загружено');
                         }
                     };
                     reader.readAsDataURL(file);
-                }
+                };
                 
                 // Удаление товара
-                function removeProduct(productId) {
+                window.removeProduct = function(productId) {
                     if (confirm('Удалить этот товар?')) {
-                        const index = products.findIndex(p => p.id === productId);
+                        const index = products.findIndex(p => p.id == productId);
                         if (index !== -1) {
                             products.splice(index, 1);
-                            renderCategories();
+                            updateCategoriesList();
                             renderProducts();
                             showNotification('Товар удален');
                         }
                     }
-                }
+                };
                 
                 // Добавление товара
-                function addProduct() {
+                window.addProduct = function() {
                     const newProduct = {
                         id: Date.now(),
                         name: 'Новый товар',
@@ -870,29 +811,32 @@ function openAdminPanel() {
                     };
                     
                     products.push(newProduct);
-                    renderCategories();
+                    updateCategoriesList();
                     renderProducts();
                     showNotification('Новый товар добавлен');
-                }
+                };
                 
                 // Сохранение всех товаров
-                function saveAllProducts() {
-                    // Сохраняем в localStorage главного окна
-                    if (window.opener) {
+                window.saveAllProducts = function() {
+                    // Сохраняем в localStorage родительского окна
+                    if (window.opener && !window.opener.closed) {
                         const updatedData = {
-                            ...${JSON.stringify(storeData)},
+                            name: 'SMOKIN174',
                             products: products
                         };
-                        window.opener.localStorage.setItem('green_store_data', JSON.stringify(updatedData));
+                        
+                        window.opener.localStorage.setItem('smokin174_data', JSON.stringify(updatedData));
                         window.opener.location.reload();
                     }
                     
-                    // Показываем уведомление
-                    showNotification('Все изменения сохранены!');
-                }
+                    // Сохраняем в текущем окне для восстановления
+                    localStorage.setItem('smokin174_admin_data', JSON.stringify(products));
+                    
+                    showNotification('Все изменения сохранены! Магазин обновлен.');
+                };
                 
                 // Показ уведомления
-                function showNotification(text) {
+                window.showNotification = function(text) {
                     const notification = document.getElementById('notification');
                     const textEl = document.getElementById('notificationText');
                     
@@ -902,10 +846,36 @@ function openAdminPanel() {
                     setTimeout(() => {
                         notification.style.display = 'none';
                     }, 3000);
+                };
+                
+                // Восстановление данных при загрузке
+                function initAdminPanel() {
+                    // Пробуем восстановить из локального хранилища админки
+                    const savedData = localStorage.getItem('smokin174_admin_data');
+                    if (savedData) {
+                        try {
+                            const parsed = JSON.parse(savedData);
+                            if (Array.isArray(parsed)) {
+                                products = parsed;
+                            }
+                        } catch(e) {
+                            console.log('Не удалось восстановить данные');
+                        }
+                    }
+                    
+                    updateCategoriesList();
+                    renderProducts();
                 }
                 
+                // Инициализация при загрузке
+                document.addEventListener('DOMContentLoaded', initAdminPanel);
+                
                 // Автосохранение при закрытии
-                window.addEventListener('beforeunload', saveAllProducts);
+                window.addEventListener('beforeunload', function() {
+                    if (window.opener && !window.opener.closed) {
+                        saveAllProducts();
+                    }
+                });
             </script>
         </body>
         </html>
