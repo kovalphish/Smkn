@@ -542,4 +542,377 @@ function openAdminPanel() {
                 }
                 
                 /* Уведомления */
-                .notification
+                .notification {
+                    position: fixed;
+                    bottom: 25px;
+                    right: 25px;
+                    background: #27ae60;
+                    color: white;
+                    padding: 15px 25px;
+                    border-radius: 10px;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                    display: none;
+                    align-items: center;
+                    gap: 12px;
+                    animation: slideInRight 0.3s;
+                    z-index: 1000;
+                }
+                
+                @keyframes slideInRight {
+                    from {
+                        opacity: 0;
+                        transform: translateX(100%);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+                
+                .notification i {
+                    font-size: 1.2rem;
+                }
+                
+                /* Адаптивность админки */
+                @media (max-width: 900px) {
+                    .admin-container {
+                        flex-direction: column;
+                    }
+                    
+                    .admin-sidebar {
+                        width: 100%;
+                        border-right: none;
+                        border-bottom: 1px solid #e0f7e9;
+                        padding: 20px;
+                    }
+                    
+                    .categories-list {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 10px;
+                    }
+                    
+                    .category-tab {
+                        margin-bottom: 0;
+                        width: auto;
+                    }
+                }
+                
+                @media (max-width: 600px) {
+                    .admin-products-grid {
+                        grid-template-columns: 1fr;
+                    }
+                    
+                    .main-header {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 15px;
+                    }
+                    
+                    .action-buttons {
+                        width: 100%;
+                    }
+                    
+                    .admin-action-btn {
+                        flex: 1;
+                        justify-content: center;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="admin-container">
+                <!-- Сайдбар с категориями -->
+                <div class="admin-sidebar">
+                    <div class="admin-header">
+                        <h1><i class="fas fa-cogs"></i> Панель управления</h1>
+                        <p>${storeData.name}</p>
+                    </div>
+                    
+                    <div class="categories-list" id="adminCategories">
+                        <!-- Категории загружаются динамически -->
+                    </div>
+                </div>
+                
+                <!-- Основное содержимое -->
+                <div class="admin-main">
+                    <div class="main-header">
+                        <h2 id="currentCategoryTitle">Все товары</h2>
+                        <div class="action-buttons">
+                            <button class="admin-action-btn btn-add" onclick="addProduct()">
+                                <i class="fas fa-plus"></i> Добавить товар
+                            </button>
+                            <button class="admin-action-btn btn-save" onclick="saveAllProducts()">
+                                <i class="fas fa-save"></i> Сохранить все
+                            </button>
+                            <button class="admin-action-btn btn-back" onclick="window.close()">
+                                <i class="fas fa-times"></i> Закрыть
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-products-grid" id="productsContainer">
+                        <!-- Товары загружаются динамически -->
+                    </div>
+                </div>
+            </div>
+            
+            <div id="notification" class="notification">
+                <i class="fas fa-check-circle"></i>
+                <span id="notificationText"></span>
+            </div>
+            
+            <script>
+                let products = ${JSON.stringify(storeData.products)};
+                let currentCategory = 'Все товары';
+                let editingProducts = false;
+                
+                // Инициализация
+                document.addEventListener('DOMContentLoaded', function() {
+                    renderCategories();
+                    renderProducts();
+                });
+                
+                // Рендер категорий в сайдбаре
+                function renderCategories() {
+                    const categories = ['Все товары', ...new Set(products.map(p => p.category))];
+                    const container = document.getElementById('adminCategories');
+                    container.innerHTML = '';
+                    
+                    categories.forEach(category => {
+                        const tab = document.createElement('button');
+                        tab.className = 'category-tab';
+                        tab.innerHTML = \`
+                            <i class="fas \${category === 'Все товары' ? 'fa-boxes' : 'fa-tag'}"></i>
+                            \${category}
+                        \`;
+                        
+                        tab.onclick = () => {
+                            currentCategory = category;
+                            document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                            tab.classList.add('active');
+                            document.getElementById('currentCategoryTitle').textContent = category;
+                            renderProducts();
+                        };
+                        
+                        if (category === 'Все товары') {
+                            tab.classList.add('active');
+                        }
+                        
+                        container.appendChild(tab);
+                    });
+                }
+                
+                // Рендер товаров
+                function renderProducts() {
+                    const filteredProducts = currentCategory === 'Все товары' 
+                        ? products 
+                        : products.filter(p => p.category === currentCategory);
+                    
+                    const container = document.getElementById('productsContainer');
+                    
+                    if (filteredProducts.length === 0) {
+                        container.innerHTML = \`
+                            <div class="empty-category">
+                                <i class="fas fa-leaf"></i>
+                                <h3>Товаров нет</h3>
+                                <p>Добавьте товары в эту категорию</p>
+                            </div>
+                        \`;
+                        return;
+                    }
+                    
+                    container.innerHTML = '';
+                    
+                    filteredProducts.forEach((product, index) => {
+                        const productDiv = document.createElement('div');
+                        productDiv.className = 'admin-product-card';
+                        
+                        // Генерация уникального ID для инпутов
+                        const inputId = 'product_' + product.id;
+                        
+                        productDiv.innerHTML = \`
+                            <div class="product-form-group">
+                                <label>Название товара</label>
+                                <input type="text" 
+                                       id="\${inputId}_name" 
+                                       value="\${product.name}"
+                                       placeholder="Введите название">
+                            </div>
+                            
+                            <div class="product-form-group">
+                                <label>Категория</label>
+                                <input type="text" 
+                                       id="\${inputId}_category" 
+                                       value="\${product.category}"
+                                       placeholder="Например: Напитки">
+                            </div>
+                            
+                            <div class="product-form-group">
+                                <label>Цена (₽)</label>
+                                <input type="number" 
+                                       id="\${inputId}_price" 
+                                       value="\${product.price}"
+                                       placeholder="0">
+                            </div>
+                            
+                            <div class="product-form-group">
+                                <label>Изображение товара</label>
+                                <div class="image-upload-container">
+                                    <div class="image-preview \${!product.image ? 'empty' : ''}" 
+                                         onclick="document.getElementById('\${inputId}_file').click()">
+                                        \${product.image ? 
+                                            '<img src="' + product.image + '" alt="Превью">' : 
+                                            '<i class="fas fa-image"></i><span>Загрузить изображение</span>'
+                                        }
+                                    </div>
+                                    <input type="file" 
+                                           class="file-input" 
+                                           id="\${inputId}_file"
+                                           accept="image/*"
+                                           onchange="uploadImage('\${inputId}', this)">
+                                    <button class="upload-btn" onclick="document.getElementById('\${inputId}_file').click()">
+                                        <i class="fas fa-upload"></i>
+                                    </button>
+                                    <input type="text" 
+                                           id="\${inputId}_image" 
+                                           value="\${product.image || ''}"
+                                           placeholder="Или вставьте URL картинки"
+                                           style="display: none;">
+                                </div>
+                            </div>
+                            
+                            <div class="product-actions">
+                                <button class="btn-remove" onclick="removeProduct(\${product.id})">
+                                    <i class="fas fa-trash"></i> Удалить
+                                </button>
+                            </div>
+                        \`;
+                        
+                        // Добавляем обработчики изменения
+                        const nameInput = productDiv.querySelector('#' + inputId + '_name');
+                        const categoryInput = productDiv.querySelector('#' + inputId + '_category');
+                        const priceInput = productDiv.querySelector('#' + inputId + '_price');
+                        const imageInput = productDiv.querySelector('#' + inputId + '_image');
+                        
+                        const updateHandler = () => {
+                            product.name = nameInput.value;
+                            product.category = categoryInput.value;
+                            product.price = parseInt(priceInput.value) || 0;
+                            product.image = imageInput.value;
+                            
+                            // Обновляем превью если изображение изменилось
+                            const preview = productDiv.querySelector('.image-preview');
+                            if (product.image) {
+                                preview.innerHTML = '<img src="' + product.image + '" alt="Превью">';
+                                preview.classList.remove('empty');
+                            }
+                            
+                            showNotification('Изменения сохранены');
+                        };
+                        
+                        nameInput.addEventListener('change', updateHandler);
+                        categoryInput.addEventListener('change', updateHandler);
+                        priceInput.addEventListener('change', updateHandler);
+                        imageInput.addEventListener('input', updateHandler);
+                        
+                        container.appendChild(productDiv);
+                    });
+                }
+                
+                // Загрузка изображения
+                function uploadImage(inputId, fileInput) {
+                    const file = fileInput.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imageUrl = e.target.result;
+                        const imageInput = document.getElementById(inputId + '_image');
+                        const preview = fileInput.closest('.image-upload-container').querySelector('.image-preview');
+                        
+                        imageInput.value = imageUrl;
+                        preview.innerHTML = '<img src="' + imageUrl + '" alt="Превью">';
+                        preview.classList.remove('empty');
+                        
+                        // Находим продукт и обновляем его изображение
+                        const productId = parseInt(inputId.split('_')[1]);
+                        const product = products.find(p => p.id === productId);
+                        if (product) {
+                            product.image = imageUrl;
+                            showNotification('Изображение загружено');
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+                
+                // Удаление товара
+                function removeProduct(productId) {
+                    if (confirm('Удалить этот товар?')) {
+                        const index = products.findIndex(p => p.id === productId);
+                        if (index !== -1) {
+                            products.splice(index, 1);
+                            renderCategories();
+                            renderProducts();
+                            showNotification('Товар удален');
+                        }
+                    }
+                }
+                
+                // Добавление товара
+                function addProduct() {
+                    const newProduct = {
+                        id: Date.now(),
+                        name: 'Новый товар',
+                        category: currentCategory === 'Все товары' ? 'Новая категория' : currentCategory,
+                        price: 0,
+                        image: ''
+                    };
+                    
+                    products.push(newProduct);
+                    renderCategories();
+                    renderProducts();
+                    showNotification('Новый товар добавлен');
+                }
+                
+                // Сохранение всех товаров
+                function saveAllProducts() {
+                    // Сохраняем в localStorage главного окна
+                    if (window.opener) {
+                        const updatedData = {
+                            ...${JSON.stringify(storeData)},
+                            products: products
+                        };
+                        window.opener.localStorage.setItem('green_store_data', JSON.stringify(updatedData));
+                        window.opener.location.reload();
+                    }
+                    
+                    // Показываем уведомление
+                    showNotification('Все изменения сохранены!');
+                }
+                
+                // Показ уведомления
+                function showNotification(text) {
+                    const notification = document.getElementById('notification');
+                    const textEl = document.getElementById('notificationText');
+                    
+                    textEl.textContent = text;
+                    notification.style.display = 'flex';
+                    
+                    setTimeout(() => {
+                        notification.style.display = 'none';
+                    }, 3000);
+                }
+                
+                // Автосохранение при закрытии
+                window.addEventListener('beforeunload', saveAllProducts);
+            </script>
+        </body>
+        </html>
+    `);
+}
+
+// Сохранение при закрытии
+window.addEventListener('beforeunload', function() {
+    saveStoreData();
+});
