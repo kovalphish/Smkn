@@ -62,9 +62,6 @@
             font-weight: 600;
             font-size: 0.9rem;
             transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
         
         .btn-save {
@@ -75,7 +72,6 @@
         .btn-save:hover {
             background: #f8f9fa;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
         .btn-back {
@@ -101,16 +97,12 @@
             font-weight: 600;
             margin-bottom: 25px;
             transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
         }
         
         .btn-add:hover {
             background: #27ae60;
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
         }
         
         .products-table {
@@ -126,8 +118,6 @@
             color: #666;
             font-weight: 600;
             font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
             border-bottom: 2px solid #eee;
         }
         
@@ -137,30 +127,17 @@
             vertical-align: middle;
         }
         
-        .product-row:hover {
-            background: #fafbfc;
-        }
-        
         .product-input {
             width: 100%;
             padding: 10px 12px;
             border: 2px solid #e0f7e9;
             border-radius: 8px;
             font-size: 0.95rem;
-            transition: all 0.3s;
-            background: white;
         }
         
         .product-input:focus {
             outline: none;
             border-color: #27ae60;
-            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
-        }
-        
-        .product-image-cell {
-            display: flex;
-            align-items: center;
-            gap: 15px;
         }
         
         .product-image-preview {
@@ -179,11 +156,7 @@
             border-radius: 6px;
             cursor: pointer;
             font-size: 0.85rem;
-            transition: opacity 0.3s;
-        }
-        
-        .image-upload-btn:hover {
-            opacity: 0.9;
+            margin-top: 5px;
         }
         
         .file-input {
@@ -198,22 +171,12 @@
             border-radius: 6px;
             cursor: pointer;
             font-size: 0.85rem;
-            transition: opacity 0.3s;
-        }
-        
-        .btn-delete:hover {
-            opacity: 0.9;
         }
         
         .empty-state {
             text-align: center;
             padding: 60px 20px;
             color: #999;
-        }
-        
-        .empty-state h3 {
-            margin-bottom: 10px;
-            color: #666;
         }
         
         .notification {
@@ -224,10 +187,7 @@
             color: white;
             padding: 15px 25px;
             border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             display: none;
-            align-items: center;
-            gap: 12px;
             animation: slideInRight 0.3s;
             z-index: 1000;
         }
@@ -237,46 +197,28 @@
             to { opacity: 1; transform: translateX(0); }
         }
         
+        .url-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0f7e9;
+            border-radius: 8px;
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .url-input:focus {
+            outline: none;
+            border-color: #27ae60;
+        }
+        
         @media (max-width: 768px) {
             body { padding: 10px; }
-            
-            .admin-header {
-                padding: 20px;
-                text-align: center;
-            }
-            
-            .admin-actions {
-                position: static;
-                margin-top: 15px;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            
-            .products-table {
-                display: block;
-                overflow-x: auto;
-            }
-            
-            .products-table th,
-            .products-table td {
-                padding: 12px 8px;
-                font-size: 14px;
-            }
-            
-            .product-input {
-                width: 100%;
-                min-width: 120px;
-            }
-            
-            .product-image-preview {
-                width: 50px;
-                height: 50px;
-            }
-            
-            .admin-btn {
-                padding: 8px 15px;
-                font-size: 14px;
-            }
+            .admin-header { padding: 20px; text-align: center; }
+            .admin-actions { position: static; margin-top: 15px; justify-content: center; }
+            .products-table { display: block; overflow-x: auto; }
+            .products-table th, .products-table td { padding: 12px 8px; font-size: 14px; }
+            .product-input { width: 100%; min-width: 120px; }
+            .product-image-preview { width: 50px; height: 50px; }
         }
     </style>
 </head>
@@ -284,27 +226,27 @@
     <div class="admin-container">
         <div class="admin-header">
             <div>
-                <h1>⚙️ Панель управления товарами</h1>
+                <h1>Панель управления товарами</h1>
                 <p>SMOKIN174 - Редактирование каталога</p>
             </div>
             
             <div class="admin-actions">
-                <button class="admin-btn btn-back" onclick="window.close()">
-                    ❌ Закрыть
-                </button>
+                <button class="admin-btn btn-back" onclick="window.close()">Закрыть</button>
             </div>
         </div>
         
         <div class="admin-content">
-            <button class="btn-add" onclick="addProduct()">
-                ➕ Добавить новый товар
-            </button>
+            <button class="btn-add" onclick="addProduct()">➕ Добавить товар</button>
+            
+            <div style="margin-bottom: 20px; color: #666; font-size: 0.9rem;">
+                ⚠️ Для отображения на всех устройствах используйте URL картинок (например, с imgur.com)
+            </div>
             
             <table class="products-table">
                 <thead>
                     <tr>
                         <th style="width: 50px">ID</th>
-                        <th style="width: 100px">Изображение</th>
+                        <th style="width: 120px">Изображение</th>
                         <th>Название</th>
                         <th>Категория</th>
                         <th style="width: 120px">Цена (₽)</th>
@@ -316,13 +258,28 @@
             
             <div id="emptyState" class="empty-state" style="display: none;">
                 <h3>Товаров нет</h3>
-                <p>Добавьте первый товар, нажав на кнопку выше</p>
+                <p>Добавьте первый товар</p>
             </div>
             
             <div style="margin-top: 40px; text-align: center;">
                 <button class="admin-btn btn-save" onclick="saveAndClose()" style="padding: 15px 40px; font-size: 1rem;">
                     💾 Сохранить и обновить магазин
                 </button>
+                
+                <button onclick="resetAllData()" style="
+                    background: #ff6b6b;
+                    color: white;
+                    border: none;
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-weight: bold;
+                    margin-top: 15px;
+                    font-size: 14px;
+                ">
+                    🗑️ Сбросить все данные
+                </button>
+                
                 <p style="color: #666; margin-top: 10px; font-size: 0.9rem;">
                     Все изменения сохраняются автоматически
                 </p>
@@ -345,7 +302,7 @@
             }
         });
         
-        // Или загружаем из localStorage
+        // Загружаем из localStorage
         function loadProducts() {
             try {
                 const saved = localStorage.getItem('smokin174_data');
@@ -355,16 +312,6 @@
                 }
             } catch (e) {
                 console.log('Ошибка загрузки');
-            }
-            
-            if (products.length === 0) {
-                products = [{
-                    id: Date.now(),
-                    name: "Пример товара",
-                    category: "Основная",
-                    price: 1000,
-                    image: ""
-                }];
             }
             
             renderProductsTable();
@@ -388,22 +335,24 @@
                 const row = document.createElement('tr');
                 row.className = 'product-row';
                 
+                // Проверяем картинку - используем только URL
+                const imageUrl = product.image && product.image.startsWith('http') 
+                    ? product.image 
+                    : 'https://via.placeholder.com/70x70?text=Нет+фото';
+                
                 row.innerHTML = `
                     <td>${product.id}</td>
                     <td>
-                        <div class="product-image-cell">
-                            <img src="${product.image || 'placeholder.jpg'}" 
-                                 class="product-image-preview" 
-                                 alt="Превью"
-                                 onerror="this.src='placeholder.jpg'">
-                            <button class="image-upload-btn" onclick="uploadImage(${index})">
-                                📤
-                            </button>
-                            <input type="file" 
-                                   class="file-input" 
-                                   id="imageUpload_${index}"
-                                   accept="image/*"
-                                   onchange="handleImageUpload(${index}, this)">
+                        <img src="${imageUrl}" 
+                             class="product-image-preview" 
+                             alt="Превью"
+                             onerror="this.src='https://via.placeholder.com/70x70?text=Ошибка'">
+                        <div style="margin-top: 5px;">
+                            <input type="text" 
+                                   class="url-input" 
+                                   placeholder="URL картинки (http://...)"
+                                   value="${product.image || ''}"
+                                   onchange="updateProduct(${index}, 'image', this.value)">
                         </div>
                     </td>
                     <td>
@@ -444,33 +393,6 @@
             products[index][field] = value;
             saveChanges();
             showNotification('Изменения сохранены');
-        }
-        
-        // Загрузка изображения
-        function uploadImage(index) {
-            document.getElementById(`imageUpload_${index}`).click();
-        }
-        
-        function handleImageUpload(index, fileInput) {
-            const file = fileInput.files[0];
-            if (!file) return;
-            
-            if (file.size > 5 * 1024 * 1024) {
-                alert('Файл слишком большой. Максимум 5MB');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                products[index].image = e.target.result;
-                
-                const img = fileInput.closest('.product-image-cell').querySelector('.product-image-preview');
-                img.src = e.target.result;
-                
-                saveChanges();
-                showNotification('Изображение загружено');
-            };
-            reader.readAsDataURL(file);
         }
         
         // Удаление товара
@@ -531,13 +453,30 @@
             }, 1000);
         }
         
+        // Сбросить все данные
+        function resetAllData() {
+            if (confirm('ВНИМАНИЕ! Удалить ВСЕ товары на всех устройствах?')) {
+                localStorage.removeItem('smokin174_data');
+                products = [];
+                renderProductsTable();
+                showNotification('Все данные сброшены');
+                
+                if (window.opener && !window.opener.closed) {
+                    window.opener.postMessage({
+                        type: 'UPDATE_PRODUCTS',
+                        products: []
+                    }, '*');
+                }
+            }
+        }
+        
         // Показать уведомление
         function showNotification(text) {
             const notification = document.getElementById('notification');
             const textEl = document.getElementById('notificationText');
             
             textEl.textContent = text;
-            notification.style.display = 'flex';
+            notification.style.display = 'block';
             
             setTimeout(() => {
                 notification.style.display = 'none';

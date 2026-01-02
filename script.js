@@ -18,11 +18,9 @@ function loadStoreData() {
         console.log('Ошибка загрузки данных');
     }
     
-    // Если нет товаров - создаем пример
-    if (storeData.products.length === 0) {
-        storeData.products = [];
-        saveStoreData();
-    }
+    // НИКАКИХ ПРИМЕРНЫХ ТОВАРОВ!
+    // Если данных нет - оставляем пустой массив
+    saveStoreData();
 }
 
 // Сохраняем данные
@@ -102,7 +100,7 @@ function filterProducts(category) {
     displayProducts(filtered);
 }
 
-// Отображение товаров
+// Отображение товаров - ВАЖНО: используем только URL картинок
 function displayProducts(productsToShow) {
     const container = document.getElementById('productsContainer');
     container.innerHTML = '';
@@ -123,9 +121,14 @@ function displayProducts(productsToShow) {
         card.className = 'product-card';
         card.style.setProperty('--index', index);
         
+        // ВАЖНО: используем только URL или заглушку
+        const imageUrl = product.image && product.image.startsWith('http') 
+            ? product.image 
+            : 'https://via.placeholder.com/400x300?text=Нет+фото';
+        
         card.innerHTML = `
-            <img src="${product.image || 'placeholder.jpg'}" alt="${product.name}" class="product-image" 
-                 onerror="this.src='placeholder.jpg'">
+            <img src="${imageUrl}" alt="${product.name}" class="product-image" 
+                 onerror="this.src='https://via.placeholder.com/400x300?text=Ошибка+загрузки'">
             <div class="product-info">
                 <div class="product-name">${product.name}</div>
                 <div class="product-price">${product.price.toLocaleString()}</div>
@@ -183,7 +186,7 @@ function loginAdmin() {
 function openAdminPanel() {
     const adminWindow = window.open('admin-panel.html', '_blank', 'width=1100,height=700,scrollbars=yes');
     
-    // Ждем пока загрузится админка и передаем данные
+    // Ждем загрузки и передаем данные
     const checkAdminLoaded = setInterval(() => {
         if (adminWindow && !adminWindow.closed) {
             try {
@@ -192,9 +195,7 @@ function openAdminPanel() {
                     products: storeData.products
                 }, '*');
                 clearInterval(checkAdminLoaded);
-            } catch (e) {
-                // Окно еще не готово
-            }
+            } catch (e) {}
         } else {
             clearInterval(checkAdminLoaded);
         }
@@ -214,3 +215,14 @@ function openAdminPanel() {
 window.addEventListener('beforeunload', function() {
     saveStoreData();
 });
+
+// Функция для принудительного сброса
+function resetAllData() {
+    if (confirm('Удалить ВСЕ данные на всех устройствах?')) {
+        localStorage.removeItem('smokin174_data');
+        storeData.products = [];
+        saveStoreData();
+        loadProducts();
+        alert('Все данные сброшены!');
+    }
+}
